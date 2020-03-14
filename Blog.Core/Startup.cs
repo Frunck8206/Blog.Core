@@ -95,7 +95,7 @@ namespace Blog.Core
         // 注意在CreateDefaultBuilder中，添加Autofac服务工厂
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            var basePath = Microsoft.DotNet.PlatformAbstractions.ApplicationEnvironment.ApplicationBasePath;
+            var basePath = AppContext.BaseDirectory;
             //builder.RegisterType<AdvertisementServices>().As<IAdvertisementServices>();
 
 
@@ -162,7 +162,7 @@ namespace Blog.Core
 
             #region 没有接口的单独类 class 注入
 
-            //只能注入该类中的虚方法
+            //只能注入该类中的虚方法，且必须是public
             builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(Love)))
                 .EnableClassInterceptors()
                 .InterceptedBy(cacheType.ToArray());
