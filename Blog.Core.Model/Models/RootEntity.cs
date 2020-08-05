@@ -1,7 +1,6 @@
 ﻿using SqlSugar;
-using System;
 
-namespace Blog.Core.Model.Models
+namespace Blog.Core.Model
 {
     public class RootEntity
     {

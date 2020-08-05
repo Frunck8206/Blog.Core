@@ -1,6 +1,5 @@
 using Blog.Core.Common;
 using Blog.Core.Controllers;
-using Blog.Core.IRepository;
 using Blog.Core.IServices;
 using Blog.Core.Model.Models;
 using Moq;
@@ -19,7 +18,6 @@ namespace Blog.Core.Tests
         BlogController blogController;
 
         private IBlogArticleServices blogArticleServices;
-        private IRedisCacheManager _redisCacheManager;
         DI_Test dI_Test = new DI_Test();
 
 
@@ -30,9 +28,8 @@ namespace Blog.Core.Tests
 
 
             var container = dI_Test.DICollections();
-            _redisCacheManager = container.Resolve<IRedisCacheManager>();
             blogArticleServices = container.Resolve<IBlogArticleServices>();
-            blogController = new BlogController(blogArticleServices, _redisCacheManager, mockLogger.Object);
+            blogController = new BlogController(blogArticleServices, mockLogger.Object);
         }
 
         [Fact]

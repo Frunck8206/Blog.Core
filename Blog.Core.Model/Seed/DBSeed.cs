@@ -1,27 +1,20 @@
 ﻿using Blog.Core.Common;
 using Blog.Core.Common.DB;
 using Blog.Core.Common.Helper;
+using Blog.Core.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Blog.Core.Model.Models
+namespace Blog.Core.Model.Seed
 {
     public class DBSeed
     {
-        // 这是我的在线demo数据，比较多，且杂乱
-        // gitee 源数据
         private static string SeedDataFolder = "BlogCore.Data.json/{0}.tsv";
-
-
-        // 这里我把重要的权限数据提出来的精简版，默认一个Admin_Role + 一个管理员用户，
-        // 然后就是菜单+接口+权限分配，注意没有其他博客信息了，下边seeddata 的时候，删掉即可。
-
-        // gitee 源数据
-        private static string SeedDataFolderMini = "BlogCore.Mini.Data.json/{0}.tsv";
 
 
         /// <summary>
@@ -40,63 +33,74 @@ namespace Blog.Core.Model.Models
                 }
 
                 SeedDataFolder = Path.Combine(WebRootPath, SeedDataFolder);
-                SeedDataFolderMini = Path.Combine(WebRootPath, SeedDataFolderMini);
 
-                Console.WriteLine("Config data init...");
+                Console.WriteLine("************ Blog.Core DataBase Set *****************");
                 Console.WriteLine($"Is multi-DataBase: {Appsettings.app(new string[] { "MutiDBEnabled" })}");
+                Console.WriteLine($"Is CQRS: {Appsettings.app(new string[] { "CQRSEnabled" })}");
+                Console.WriteLine();
+                Console.WriteLine($"Master DB ConId: {MyContext.ConnId}");
+                Console.WriteLine($"Master DB Type: {MyContext.DbType}");
+                Console.WriteLine($"Master DB ConnectString: {MyContext.ConnectionString}");
+                Console.WriteLine();
                 if (Appsettings.app(new string[] { "MutiDBEnabled" }).ObjToBool())
                 {
-                    Console.WriteLine($"Master DB Type: {MyContext.DbType}");
-                    Console.WriteLine($"Master DB ConnectString: {MyContext.ConnectionString}");
-                    Console.WriteLine();
-
                     var slaveIndex = 0;
-                    BaseDBConfig.MutiConnectionString.Where(x => x.ConnId != MainDb.CurrentDbConnId).ToList().ForEach(m =>
+                    BaseDBConfig.MutiConnectionString.Item1.Where(x => x.ConnId != MainDb.CurrentDbConnId).ToList().ForEach(m =>
                     {
                         slaveIndex++;
                         Console.WriteLine($"Slave{slaveIndex} DB ID: {m.ConnId}");
                         Console.WriteLine($"Slave{slaveIndex} DB Type: {m.DbType}");
-                        Console.WriteLine($"Slave{slaveIndex} DB ConnectString: {m.Conn}");
+                        Console.WriteLine($"Slave{slaveIndex} DB ConnectString: {m.Connection}");
+                        Console.WriteLine($"--------------------------------------");
                     });
-
+                }
+                else if (Appsettings.app(new string[] { "CQRSEnabled" }).ObjToBool())
+                {
+                    var slaveIndex = 0;
+                    BaseDBConfig.MutiConnectionString.Item2.Where(x => x.ConnId != MainDb.CurrentDbConnId).ToList().ForEach(m =>
+                    {
+                        slaveIndex++;
+                        Console.WriteLine($"Slave{slaveIndex} DB ID: {m.ConnId}");
+                        Console.WriteLine($"Slave{slaveIndex} DB Type: {m.DbType}");
+                        Console.WriteLine($"Slave{slaveIndex} DB ConnectString: {m.Connection}");
+                        Console.WriteLine($"--------------------------------------");
+                    });
                 }
                 else
                 {
-                    Console.WriteLine("DB Type: " + MyContext.DbType);
-                    Console.WriteLine("DB ConnectString: " + MyContext.ConnectionString);
                 }
 
-                Console.WriteLine("Create Database...");
-                // 创建数据库
-                myContext.Db.DbMaintenance.CreateDatabase();
-
-                Console.WriteLine("Create Tables...");
-                // 创建表
-                myContext.CreateTableByEntity(false,
-                    typeof(Advertisement),
-                    typeof(BlogArticle),
-                    typeof(Guestbook),
-                    typeof(Module),
-                    typeof(ModulePermission),
-                    typeof(OperateLog),
-                    typeof(PasswordLib),
-                    typeof(Permission),
-                    typeof(Role),
-                    typeof(RoleModulePermission),
-                    typeof(sysUserInfo),
-                    typeof(Topic),
-                    typeof(TopicDetail),
-                    typeof(UserRole));
-
-                // 后期单独处理某些表
-                // myContext.Db.CodeFirst.InitTables(typeof(sysUserInfo));
-
-                Console.WriteLine("Database is  created success!");
                 Console.WriteLine();
+
+
+                // 创建数据库
+                Console.WriteLine($"Create Database(The Db Id:{MyContext.ConnId})...");
+                myContext.Db.DbMaintenance.CreateDatabase();
+                ConsoleHelper.WriteSuccessLine($"Database created successfully!");
+
+
+                // 创建数据库表，遍历指定命名空间下的class，
+                // 注意不要把其他命名空间下的也添加进来。
+                Console.WriteLine("Create Tables...");
+                var modelTypes = from t in Assembly.GetExecutingAssembly().GetTypes()
+                        where t.IsClass && t.Namespace == "Blog.Core.Model.Models"
+                        select t;
+                modelTypes.ToList().ForEach(t =>
+                {
+                    if (!myContext.Db.DbMaintenance.IsAnyTable(t.Name))
+                    {
+                        Console.WriteLine(t.Name);
+                        myContext.Db.CodeFirst.InitTables(t);
+                    }
+                });
+                ConsoleHelper.WriteSuccessLine($"Tables created successfully!");
+                Console.WriteLine();
+
+
 
                 if (Appsettings.app(new string[] { "AppSettings", "SeedDBDataEnabled" }).ObjToBool())
                 {
-                    Console.WriteLine("Seeding database...");
+                    Console.WriteLine($"Seeding database data (The Db Id:{MyContext.ConnId})...");
 
                     #region BlogArticle
                     if (!await myContext.Db.Queryable<BlogArticle>().AnyAsync())
@@ -111,15 +115,15 @@ namespace Blog.Core.Model.Models
                     #endregion
 
 
-                    #region Module
-                    if (!await myContext.Db.Queryable<Module>().AnyAsync())
+                    #region Modules
+                    if (!await myContext.Db.Queryable<Modules>().AnyAsync())
                     {
-                        myContext.GetEntityDB<Module>().InsertRange(JsonHelper.ParseFormByJson<List<Module>>(FileHelper.ReadFile(string.Format(SeedDataFolder, "Module"), Encoding.UTF8)));
-                        Console.WriteLine("Table:Module created success!");
+                        myContext.GetEntityDB<Modules>().InsertRange(JsonHelper.ParseFormByJson<List<Modules>>(FileHelper.ReadFile(string.Format(SeedDataFolder, "Modules"), Encoding.UTF8)));
+                        Console.WriteLine("Table:Modules created success!");
                     }
                     else
                     {
-                        Console.WriteLine("Table:Module already exists...");
+                        Console.WriteLine("Table:Modules already exists...");
                     }
                     #endregion
 
@@ -214,7 +218,20 @@ namespace Blog.Core.Model.Models
                     }
                     #endregion
 
-                    Console.WriteLine("Done seeding database.");
+
+                    #region TasksQz
+                    if (!await myContext.Db.Queryable<TasksQz>().AnyAsync())
+                    {
+                        myContext.GetEntityDB<TasksQz>().InsertRange(JsonHelper.ParseFormByJson<List<TasksQz>>(FileHelper.ReadFile(string.Format(SeedDataFolder, "TasksQz"), Encoding.UTF8)));
+                        Console.WriteLine("Table:TasksQz created success!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Table:TasksQz already exists...");
+                    }
+                    #endregion
+
+                    ConsoleHelper.WriteSuccessLine($"Done seeding database!");
                 }
 
                 Console.WriteLine();
@@ -222,7 +239,7 @@ namespace Blog.Core.Model.Models
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("1、如果使用的是Mysql，生成的数据库字段字符集可能不是utf8的，手动修改下，或者尝试方案：删掉数据库，在连接字符串后加上CharSet=UTF8mb4，重新生成数据库. \n 2、其他错误：" + ex.Message);
             }
         }
     }
