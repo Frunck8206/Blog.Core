@@ -23,7 +23,7 @@ BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET C
 框架模块：  
 - [x] 采用`仓储+服务+接口`的形式封装框架；
 - [x] 异步 async/await 开发；
-- [x] 接入 SqlSugar 提供ORM，封装数据库操作；
+- [x] 接入国产数据库ORM组件 —— SqlSugar，封装数据库操作；
 - [x] 支持自由切换多种数据库，Sqlite/SqlServer/MySql/PostgreSQL/Oracle；
 - [x] 实现项目启动，自动生成种子数据 ✨； 
 - [x] 五种日志记录，审计/异常/请求响应/服务操作/Sql记录等； 
@@ -163,8 +163,10 @@ BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET C
 
 ## 售后服务与支持  
 
-打赏支持，入微信群，随时随地解答我框架中（NetCore、Vue、DDD、IdentityServer4等）的疑难杂症。  
-打赏的时候，备注自己的微信号，我拉你进群，两天内没回应，QQ私聊我（3143422472）；  
+鼓励作者，简单打赏，入微信群，随时随地解答我框架中（NetCore、Vue、DDD、IdentityServer4等）的疑难杂症。     
+注意是核心的问题，基础内容我建议先自学，   
+如果不想看文章和视频，可以报我的个人学习班，三杯咖啡。   
+打赏的时候，备注自己的微信号，我拉你进群，两天内没回应，QQ私聊我（3143422472）；   
 
 [赞赏列表](http://apk.neters.club/.doc/Contribution/)  
 

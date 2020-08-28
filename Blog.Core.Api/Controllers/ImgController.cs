@@ -58,7 +58,10 @@ namespace Blog.Core.Controllers
 
             try
             {
+                // 获取提交的文件
                 files = Request.Form.Files;
+                // 获取附带的数据
+                var max_ver= Request.Form["max_ver"].ObjToString();
             }
             catch (Exception)
             {
@@ -111,6 +114,30 @@ namespace Blog.Core.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        [Route("/images/Down/Bmd")]
+        [AllowAnonymous]
+        public FileStreamResult DownBmd([FromServices]IWebHostEnvironment environment, string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+            {
+                return null;
+            }
+            // 前端 blob 接收，具体查看前端admin代码
+            string filepath = Path.Combine(environment.WebRootPath, filename);
+            var stream = System.IO.File.OpenRead(filepath);
+            //string fileExt = ".bmd";
+            //获取文件的ContentType
+            var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+            //var memi = provider.Mappings[fileExt];
+            var fileName = Path.GetFileName(filepath);
+
+            HttpContext.Response.Headers.Add("fileName", fileName);
+
+            return File(stream, "application/octet-stream", fileName);
+        }
 
         // POST: api/Img
         [HttpPost]
