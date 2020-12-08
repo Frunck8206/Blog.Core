@@ -1,6 +1,6 @@
 ﻿Dev Build:: 
 
-  [![Front](https://img.shields.io/badge/Front-VUE-d.svg)](#) [![sdk](https://img.shields.io/badge/sdk-3.1-d.svg)](#)  [![Build status](https://github.com/anjoy8/blog.core/workflows/.NET%20Core/badge.svg)](https://github.com/anjoy8/Blog.Core/actions) [![codecov](https://codecov.io/gh/anjoy8/Blog.Core/branch/master/graph/badge.svg)](https://codecov.io/gh/anjoy8/Blog.Core)  [![License MIT](https://img.shields.io/badge/license-Apache-blue.svg?style=flat-square)](https://github.com/anjoy8/Blog.Core/blob/master/LICENSE) [![Language](https://img.shields.io/badge/language-csharp-d.svg)](#) 
+  [![Front](https://img.shields.io/badge/Front-VUE-d.svg)](#) [![sdk](https://img.shields.io/badge/sdk-5.0.1-d.svg)](#)  [![Build status](https://github.com/anjoy8/blog.core/workflows/.NET%20Core/badge.svg)](https://github.com/anjoy8/Blog.Core/actions) [![codecov](https://codecov.io/gh/anjoy8/Blog.Core/branch/master/graph/badge.svg)](https://codecov.io/gh/anjoy8/Blog.Core)  [![License MIT](https://img.shields.io/badge/license-Apache-blue.svg?style=flat-square)](https://github.com/anjoy8/Blog.Core/blob/master/LICENSE) [![Language](https://img.shields.io/badge/language-csharp-d.svg)](#) 
 [![star this repo](http://githubbadges.com/star.svg?user=anjoy8&repo=blog.core&style=flat)](https://github.com/boennemann/badges) 
 [![fork this repo](http://githubbadges.com/fork.svg?user=anjoy8&repo=blog.core&style=flat)](https://github.com/boennemann/badges/fork) 
 [![博客园](https://img.shields.io/badge/博客园-老张的哲学-brightgreen.svg)](https://www.cnblogs.com/laozhang-is-phi/)
@@ -10,11 +10,17 @@
 &nbsp;
 
 
-![Logo](http://apk.neters.club/logocore.png)
-![MVP](http://apk.neters.club/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png)
+![Logo](http://apk.neters.club/logocore.png)  
 
 
-BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET Core3.1 Api + Vue 2.x + RBAC】权限框架。 
+<a href="https://mvp.microsoft.com/zh-cn/PublicProfile/5003704?fullName=anson%20zhang" ><img src="http://apk.neters.club/MVP_Logo_Horizontal_Preferred_Cyan300_CMYK_72ppi.png" alt="MVP"   ></a>
+<a href="https://dotnetfoundation.org/member/Profile" ><img src="https://vueadmin.neters.club/images/1125120255netfoundation.png" alt=".netfoundation" width="220" ></a>
+
+
+
+
+Blog.Core 开箱即用的企业级前后端分离【 .NET Core5.0 Api + Vue 2.x + RBAC】权限框架。
+已被多家公司所使用：[点击查看列表](https://github.com/anjoy8/Blog.Core/issues/75)
 
 &nbsp;
 
@@ -24,7 +30,7 @@ BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET C
 - [x] 采用`仓储+服务+接口`的形式封装框架；
 - [x] 异步 async/await 开发；
 - [x] 接入国产数据库ORM组件 —— SqlSugar，封装数据库操作；
-- [x] 支持自由切换多种数据库，Sqlite/SqlServer/MySql/PostgreSQL/Oracle；
+- [x] 支持自由切换多种数据库，MySql/SqlServer/Sqlite/Oracle/Postgresql/达梦/人大金仓；
 - [x] 实现项目启动，自动生成种子数据 ✨； 
 - [x] 五种日志记录，审计/异常/请求响应/服务操作/Sql记录等； 
 - [x] 支持项目事务处理（若要分布式，用cap即可）✨；
@@ -44,16 +50,20 @@ BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET C
 - [x] 支持 CORS 跨域；
 - [x] 封装 JWT 自定义策略授权；
 - [x] 使用 Log4Net 日志框架，集成原生 ILogger 接口做日志记录；
-- [x] 使用 SingleR 双工通讯 ✨；
+- [x] 使用 SignalR 双工通讯 ✨；
 - [x] 添加 IpRateLimiting 做 API 限流处理;
-- [x] 使用 Quartz.net 做任务调度;
+- [x] 使用 Quartz.net 做任务调度（目前单机多任务，集群调度暂不支持）;
 - [x] 支持 数据库`读写分离`和多库操作 ✨;
+- [x] 新增 Redis 消息队列 ✨;
+- [x] 新增 RabbitMQ 消息队列 ✨;
+- [x] 新增 EventBus 事件总线 ✨;
 - [ ] 计划 - 设计支付宝/微信支付;
-- [ ] 计划 - Redis/RBMQ 消息队列;
 - [ ] 计划 - 数据部门权限;
 - [ ] 计划 - ES 搜索;
 
 微服务模块：
+- [x] 可配合 Docker 实现容器化；
+- [x] 可配合 Jenkins 实现CI / CD；
 - [x] 可配合 Consul 实现服务发现；
 - [x] 可配合 Ocelot 实现网关处理；
 - [x] 可配合 Nginx  实现负载均衡；
@@ -63,7 +73,8 @@ BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET C
 &nbsp;
 
 ## 给个星星! ⭐️
-如果你喜欢这个项目或者它帮助你, 请给 Star~（辛苦星咯）
+如果你喜欢这个项目或者它帮助你, 请给 Star~   
+如果你的项目中借鉴了本项目，请稍微说明下，开源不易✨。  
 
 
 
@@ -73,7 +84,8 @@ BCVP（Blog.Core&Vue Project）开箱即用的企业级前后端分离【 .NET C
 
 还在陆续整理中，不过基本操作都在,包括如何新手入门，配置数据，连接DB等等    
 
-[官方文档](http://apk.neters.club/.doc/)  
+[官方文档](http://apk.neters.club/.doc/)    
+[公众号重要文章+视频地址](https://mvp.neters.club/)    
 
 
 
