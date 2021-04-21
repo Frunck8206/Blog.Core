@@ -13,7 +13,7 @@ namespace Blog.Core.Services.BASE
     public class BaseServices<TEntity> : IBaseServices<TEntity> where TEntity : class, new()
     {
         //public IBaseRepository<TEntity> baseDal = new BaseRepository<TEntity>();
-        public IBaseRepository<TEntity> BaseDal;//通过在子类的构造函数中注入，这里是基类，不用构造函数
+        public IBaseRepository<TEntity> BaseDal { get; set; }//通过在子类的构造函数中注入，这里是基类，不用构造函数
 
         public async Task<TEntity> QueryById(object objId)
         {
@@ -172,13 +172,13 @@ namespace Blog.Core.Services.BASE
         /// 作　　者:Blog.Core
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="strWhere">过滤条件</param>
+        /// <param name="whereExpression">过滤条件</param>
         /// <param name="expression">查询实体条件</param>
         /// <param name="strOrderByFileds">排序条件</param>
         /// <returns></returns>
-        public async Task<List<TResult>> Query<TResult>(string strWhere, Expression<Func<TEntity, TResult>> expression, string strOrderByFileds)
+        public async Task<List<TResult>> Query<TResult>(Expression<Func<TEntity, TResult>> expression, Expression<Func<TEntity, bool>> whereExpression,string strOrderByFileds)
         {
-            return await BaseDal.Query(strWhere,expression, strOrderByFileds);
+            return await BaseDal.Query(expression, whereExpression, strOrderByFileds);
         }
 
         /// <summary>
